@@ -6,23 +6,85 @@ module.exports = {
         //var text = fs.readFileSync('input2.txt').toString();
         var commSeparated = text.split(",");
         return commSeparated;
-    }, mainFun: function(){
-        var bigList = this.readTextFile();        
+    }, mainFun: function(input){
+        var bigList = this.readTextFile();   
+        var outputs = [];   
+        var outputsNew = []; 
         for (var i = 0; i < bigList.length; i++) {
             bigList[i] = Number.parseInt(bigList[i]);
-        }
+        } 
+
         for (var i = 0; i < bigList.length; i++) {
-            var first = bigList[i+1];
-            var second = bigList[i+2];
-            var third = bigList[i+3];
-            switch(bigList[i]) {
+            var atI = bigList[i];
+            var params = '';
+            var paramsList;
+            if (i < bigList.length-2 || bigList[i] === 3) {  
+                var first = bigList[i+1];
+            }
+            if (i < bigList.length-4 &&  bigList[i] != 3) {
+                var second = bigList[i+2];
+                var third = bigList[i+3];
+            }
+            var aiString = atI.toString();
+            var aiStringLength = aiString.length - 2;
+            var aiSList = aiString.split('');
+            if (aiSList.length > 2) {
+                switch(aiString.substr(aiStringLength)) {
+                    case '01':
+                        params = aiString;
+                        paramsList = params.split("");
+                        atI = 1;
+                        break;
+                    case '02':
+                        params = aiString;
+                        paramsList = params.split("");
+                        atI = 2;
+                        break;
+                    default: 
+                        break;
+                }
+            }
+            
+            var value1 = 0;
+            var value2 = 0;
+            if (params.length >  2 && params.includes('0')) {
+                if (params.length === 3) {
+                    params = '0' + params;
+                    paramsList = params.split("");
+                }
+                
+                if (paramsList[1] == '0') {
+                    value1 = bigList[first];
+                } else {
+                    value1 = first;
+                }
+
+                if(paramsList[0] === '0') {
+                    value2 = bigList[second];
+                } else {
+                    value2 = second;
+                }
+            } else {
+                value1 = bigList[first];
+                value2 = bigList[second];
+            }
+            outputsNew.push('Value1: ' + value1 + ' | Value2: ' + value2);
+            switch(atI) {
                 case 1:
-                    bigList[third] = bigList[first] + bigList[second];
+                    bigList[third] = value1 + value2;
                     i = i+3;
                     continue;
                 case 2: 
-                    bigList[third] = bigList[first] * bigList[second];
+                    bigList[third] = value1 * value2;
                     i = i+3;
+                    continue;
+                case 3:
+                    bigList[first] = input;
+                    i = i+1;
+                    continue;
+                case 4: 
+                    i = i+1;
+                    outputs.push(value1 + ' || ' + first + ' || ' + i);
                     continue;
                 case 99:
                     i = bigList.length;
@@ -31,50 +93,20 @@ module.exports = {
                     continue;
             }
         }
-        return bigList[0];
-    }, mainFunP2: function(){
-        
-        var returnList = [];
-        var bigList = [];
-        for (var n = 0; n < 100; n++) {
-            for (var v = 0; v < 100; v++) {
-                bigList = this.readTextFile();        
-                for (var i = 0; i < bigList.length; i++) {
-                    bigList[i] = Number.parseInt(bigList[i]);
-                }
-                bigList[1] = n; //noun
-                bigList[2] = v; //verb
-                for (var i = 0; i < bigList.length; i++) {
-                    var first = bigList[i+1];
-                    var second = bigList[i+2];
-                    var third = bigList[i+3];
-                    switch(bigList[i]) {
-                        case 1:
-                            bigList[third] = bigList[first] + bigList[second];
-                            i = i+3;
-                            continue;
-                        case 2: 
-                            bigList[third] = bigList[first] * bigList[second];
-                            i = i+3;
-                            continue;
-                        case 99:
-                            i = bigList.length;
-                            ;
-                        default:
-                            continue;
-                    }
-                }
-                if (bigList[0] === 19690720) {
-                    //return 'this!';
-                    var sum = (100 * n) + v;
-                    return sum;
-                }
-               
-            }           
-        }
-        return null;
+        return outputs;
     }
 }
 
 
   require('make-runnable');
+
+  // const fs = require('fs');
+
+  // fs.writeFile("test.txt",  bigList, function(err) {
+
+  //     if(err) {
+  //         return console.log(err);
+  //     }
+
+  //     console.log("The file was saved!");
+  // }); 
