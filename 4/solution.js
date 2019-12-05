@@ -1,256 +1,96 @@
 
 module.exports = {
     readTextFile: function () {
-    var fs = require("fs");
-    var text = fs.readFileSync('input.txt').toString();
-    //var text = fs.readFileSync('input2.txt').toString(); //test input
-    var newLineSep = text.split(/\r?\n/);
-    return newLineSep;
-}, mainFun: function(){
-    var inputs = this.readTextFile();
-    
-    var listOfLines = [];
-    for (var input = 0; input < 2; input++) {
-        var sep = inputs[input].split(',');
-        var lastX = 0;
-        var lastY = 0;
-        for (var i = 0; i < sep.length; i++) {
-            var value = Number.parseInt(sep[i].substring(1));
-            switch(sep[i].substr(0, 1)) {
-                case 'R':
-                    for (var v = lastX; v < lastX + value; v++) {
-                        listOfLines.push(input + ': ' + v + ',' + lastY);
+        var fs = require("fs");
+        var text = fs.readFileSync('input.txt').toString();
+        //var text = fs.readFileSync('input2.txt').toString(); //test input
+        //var newLineSep = text.split(/\r?\n/);
+        var comSep = text.split("-");
+        return comSep;
+    }, mainFun: function(){
+        /* --
+        It is a six-digit number.
+        The value is within the range given in your puzzle input.
+        Two adjacent digits are the same (like 22 in 122345).
+        Going from left to right, the digits never decrease; they only ever increase or stay the same (like 111123 or 135679).
+        --*/
+        var inputs = this.readTextFile();
+        var possiblePasswords = [];
+        var notAPassword = [];
+        for (var i = inputs[0]; i < inputs[1]; i++) {
+            i = i.toString();
+            if (i.length === 6) {
+                var strSplit = i.split("");
+                var adj = false;
+                for (var s = 1; s < 6; s++) {
+                    if (strSplit[s] === strSplit[s-1]) {
+                        adj = true;
                     }
-                    lastX = value+lastX;
-                    break;
-                case 'L': 
-                    for (var v = lastX; v > lastX - value; v--) {
-                        listOfLines.push(input + ': ' + v + ',' + lastY);
+                }
+                if (adj === true) {
+                    var incr = true;
+                    for (var t = 1; t < 6; t++) {
+                        if (Number.parseInt(strSplit[t]) >= Number.parseInt(strSplit[t-1])) {
+                            continue;
+                        } else {
+                            incr = false;
+                        }
                     }
-                    lastX = lastX - value;
-                    break;
-                case 'D':
-                    for (var v = lastY; v > lastY - value; v--) {
-                        listOfLines.push(input + ': ' + lastX + ',' + v);
+                    if (incr === true) {
+                        possiblePasswords.push(i);
                     }
-                    lastY = lastY - value;
-                    break;
-                case 'U':
-                    for (var v = lastY; v < lastY + value; v++) {
-                        listOfLines.push(input + ': ' + lastX + ',' + v);
-                    }
-                    lastY = value+lastY;
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    //return listOfLines.length;
-
-    var sum = 0;
-    var sum2;
-    var a = [], b = [];
-
-    for (var x = 0; x < listOfLines.length; x++) {
-        if (listOfLines[x].substr(0,1) == 0) {
-            a.push(listOfLines[x].substring(3));
-        } else {
-            b.push(listOfLines[x].substring(3));
-        }
-    }
-
-    for (var i = 0; i < b.length; i++) {
-        if (a.includes(b[i])) {
-            if (b[i] != '0,0') {
-                if (sum === 0) {
-                    sum = Math.abs(Number.parseInt(b[i].split(',')[0])) + Math.abs(Number.parseInt(b[i].split(',')[1]));
                 } else {
-                    sum2 = Math.abs(Number.parseInt(b[i].split(',')[0])) + Math.abs(Number.parseInt(b[i].split(',')[1]));
-                    if (sum2 < sum) {
-                        sum = sum2;
-                    } 
+                    continue;
                 }
+            } else {
+                notAPassword.push(i);
+                continue;
             }
         }
-    }
-    return sum;
-}, findIntersection: function(intersection, input) {
-    var inputs = this.readTextFile();
-    var stepCnt = 0;
-    var done = false;
-    var sep = inputs[input].split(',');
-    var lastX = 0;
-    var lastY = 0;
-    var testInts = [];
-    for (var i = 0; i < sep.length; i++) {
-        done = false;
-        var value = Number.parseInt(sep[i].substring(1));
-        switch(sep[i].substr(0, 1)) {
-            case 'R':
-                for (var v = lastX; v < lastX + value; v++) {
-                   
-                    if((v + ',' + lastY) == intersection) {
-                        done = true;
-                        stepCnt += Math.abs(v - lastX);
-                        return stepCnt;
-                        break;
+        //return notAPassword;
+        return possiblePasswords.length;
+    }, mainFunP2: function(){
+        var inputs = this.readTextFile();
+        var possiblePasswords = [];
+        for (var i = inputs[0]; i < inputs[1]; i++) {
+            i = i.toString();
+            if (i.length === 6) {
+                var strSplit = i.split("");
+                var adj = false;
+                for (var s = 0; s < 6; s++) {
+                    var sCount = 0;
+                    for (var c = 0; c < 6; c++) {
+                        if (strSplit[s] === strSplit[c]) {
+                            sCount++;
+                        }
                     } 
-                }
-                if (done) {
-                    break;
-                    //return stepCnt;
-                 } else {
-                     stepCnt += value;
-                 }
-                lastX = value+lastX;
-                
-                break;
-            case 'L': 
-                for (var v = lastX; v > lastX - value; v--) {
-                    if((v + ',' + lastY) == intersection) {
-                        done = true;
-                        stepCnt += Math.abs(v - lastX);
-                        return stepCnt;
+                    if (sCount === 2) {
+                        adj = true;
                         break;
-                    } 
+                    }
                 }
-                if (done) {
-                    break;
-                    //return stepCnt;
+                if (adj === true) {
+                    var incr = true;
+                    for (var t = 1; t < 6; t++) {
+                        if (Number.parseInt(strSplit[t]) >= Number.parseInt(strSplit[t-1])) {
+                            continue;
+                        } else {
+                            incr = false;
+                        }
+                    }
+                    if (incr === true) {
+                        
+                        possiblePasswords.push(i);
+                    }
                 } else {
-                    stepCnt += value;
+                    continue;
                 }
-                lastX = lastX - value;
-                
-                break;
-            case 'D':
-                for (var v = lastY; v > lastY - value; v--) {
-                    if((lastX + ',' + v) == intersection) {
-                        done = true;
-                        stepCnt += Math.abs(v - lastY);
-                        return stepCnt;
-                        break;
-                    } 
-                }
-                if (done) {
-                    break;
-                    //return stepCnt;
-                 } else {
-                     stepCnt += value;
-                 }
-                
-                lastY = lastY - value;
-                break;
-            case 'U':
-                for (var v = lastY; v < lastY + value; v++) {
-                    if((lastX + ',' + v) == intersection) {
-                        done = true;
-                        stepCnt += Math.abs(v - lastY);
-                        return stepCnt;
-                        break;
-                    }
-                }
-                if (done) {
-                    break;
-                    //return stepCnt;
-                 } else {
-                     stepCnt += value;
-                 }
-                
-                lastY = value+lastY;
-                break;
-            default:
-                break;
-        }
-        
-    }
-   return testInts;
-return stepCnt;
-    
-}, mainFunP2: function(){
-    var inputs = this.readTextFile();
-    
-    var listOfLines = [];
-    for (var input = 0; input < 2; input++) {
-        var sep = inputs[input].split(',');
-        var lastX = 0;
-        var lastY = 0;
-        for (var i = 0; i < sep.length; i++) {
-            var value = Number.parseInt(sep[i].substring(1));
-            switch(sep[i].substr(0, 1)) {
-                case 'R':
-                    for (var v = lastX; v < lastX + value; v++) {
-                        listOfLines.push(input + ': ' + v + ',' + lastY);
-                    }
-                    lastX = value+lastX;
-                    break;
-                case 'L': 
-                    for (var v = lastX; v > lastX - value; v--) {
-                        listOfLines.push(input + ': ' + v + ',' + lastY);
-                    }
-                    lastX = lastX - value;
-                    break;
-                case 'D':
-                    for (var v = lastY; v > lastY - value; v--) {
-                        listOfLines.push(input + ': ' + lastX + ',' + v);
-                    }
-                    lastY = lastY - value;
-                    break;
-                case 'U':
-                    for (var v = lastY; v < lastY + value; v++) {
-                        listOfLines.push(input + ': ' + lastX + ',' + v);
-                    }
-                    lastY = value+lastY;
-                    break;
-                default:
-                    break;
+            } else {
+                continue;
             }
         }
+        return possiblePasswords.length;
     }
-
-    var intersections = [];
-    var sum = 0;
-    var sum2;
-    var a = [], b = [];
-
-    for (var x = 0; x < listOfLines.length; x++) {
-        if (listOfLines[x].substr(0,1) == 0) {
-            a.push(listOfLines[x].substring(3));
-        } else {
-            b.push(listOfLines[x].substring(3));
-        }
-    }
-
-    for (var i = 0; i < b.length; i++) {
-        if (a.includes(b[i])) {
-            if (b[i] != '0,0') {
-                if (!intersections.includes(b[i])) {
-                    intersections.push(b[i]);
-                }
-            }
-        }
-    }
-   //return intersections[0];
-
-    //traverse each a and b to find retVal, get index. Count values up until then
-    var intersectionsSteps = [];
-    var shortestStep = 100000000;
-    var steps = [];
-    for (var i = 0; i < intersections.length; i++) {
-        var stepCount = 0;
-        //return this.findIntersection(intersections[i], 0);
-        stepCount = this.findIntersection(intersections[i], 0) + this.findIntersection(intersections[i], 1);
-       // steps.push('[' + this.findIntersection(intersections[i], 0) + ',' + this.findIntersection(intersections[i], 1) + ']');
-        steps.push(stepCount);
-        if (stepCount < shortestStep) {
-            shortestStep = stepCount;
-        }
-    }
-
-    return shortestStep;
-}
 }
 
 
