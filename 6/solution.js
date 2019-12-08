@@ -10,8 +10,13 @@ module.exports = {
         var orbList = this.readTextFile();
         orbList.sort();
         var bigOrbList = [];
+        var planetSet = new Set();
         var tempI = 0;
         for (var i = 0; i < orbList.length; i++) {
+            planetSet.add(orbList[i]);
+        }
+        for (var i = 0; i < orbList.length; i++) {
+            planetSet.add(orbList[i]);
             var innerList = [];
             var sep = orbList[i].split(")");
             var orbiter = sep[1];
@@ -21,11 +26,12 @@ module.exports = {
             } else {
                 tempI = i;
             }
-            if (bigOrbList[i].length > 1)
-            bigOrbList.splice(tempI, 0, ; 
+            //if (bigOrbList[i].length > 1) {}
+            //bigOrbList.splice(tempI, 0); 
             bigOrbList.push(orbited);
             bigOrbList.push(orbiter);
         }
+        return planetSet;
         return bigOrbList; 
     }, mainFunP2: function(){
         
