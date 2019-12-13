@@ -10,23 +10,15 @@ module.exports = {
         // for (var m = 0; m < planetSet.length; m++) {
         //     var list = map.get(planetSet[m]);
         // }
-    }, isMapEmpty: function(map,planetSet) {
-        var end = 0;
-        for (var m = 0; m < planetSet.length; m++) {
-            var list = map.get(planetSet[m]);
-            if (list.size > 0) {
-                end = 0;
+    }, isMapEmpty: function(map) {
+        var returnBool = true;
+        for (const entry of map) {
+            if (entry[1].length > 0) {
+                returnBool = false;
                 break;
-            } else {
-                end = 1;
             }
         }
-        if (end === 1) {
-            //map is empty
-            return true;
-        } else {
-            return false;
-        }
+        return returnBool;
 
 
     }, traverse: function(list, map, parentP) {
@@ -130,7 +122,7 @@ module.exports = {
                         if (planetL[0] !== null) {
                             var removeLList = bigOrbMap.get(planetL[0]);
                             var spliceIndex = removeLList.indexOf(planetL[1]);
-                            testList.push(planetL[1]);
+                            //testList.push(planetL[1]);
                             // return spliceIndex;
                             removeLList.splice(spliceIndex, 1);
                             bigOrbMap.set(planetL[0],removeLList);
@@ -149,6 +141,7 @@ module.exports = {
             // var endBool = true;
             if (!endBool) {
                 //end = 0;
+                return endBool;
             }
             
             // if (endBool) {
@@ -161,6 +154,7 @@ module.exports = {
             //return end;
         }
         // return bigOrbMap;
+
         return testList;
         return totalOrbits;
 
