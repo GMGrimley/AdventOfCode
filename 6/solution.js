@@ -99,37 +99,33 @@ module.exports = {
             
         }
         
-        // return bigOrbMap;
-        var end = 0;
+        var whileBool = true;
         var testList = [];
-        while (end < 10) {
+        while (whileBool) {
             for (var x = 0; x < planetSetA.length; x++) {
 
                 // find bottom values, count them, remove them.
                 var planetL = this.traverse(bigOrbMap.get(planetSetA[x]), bigOrbMap); //a last-stop orbiter
-                // testList.push(planetL);
-                // return planetL;
-                // loop to find parent planet
+                
+                // count up the tree
                 if (typeof planetL !== "undefined" && planetL !== null) {
-
                     if (planetL[0] !== null) { 
                         totalOrbits += this.countTraverse(totalOrbits+1, bigOrbMap, planetL[0], planetSetA);
-                        // return planetL[1] + ' --- ' + totalOrbits;
                     } else {
                         continue;
                     }
+
+                    // Remove last PlanetL from BigOrbMap
+                    // This prevents counting the same planet twice
+                    // and shouldn't affect the total count, since 
+                    // we're finding a final node on a branch.
                     if (typeof planetL !== "undefined") {
                         if (planetL[0] !== null) {
                             var removeLList = bigOrbMap.get(planetL[0]);
                             var spliceIndex = removeLList.indexOf(planetL[1]);
-                            //testList.push(planetL[1]);
-                            // return spliceIndex;
                             removeLList.splice(spliceIndex, 1);
                             bigOrbMap.set(planetL[0],removeLList);
-                            //return bigOrbMap;
                         }
-        
-                        // traverse map to make sure data still exists
                     }
                 } else {
                     continue;
@@ -137,31 +133,14 @@ module.exports = {
             }
             // is map depleted?
             var endBool = this.isMapEmpty(bigOrbMap, planetSet);
-            // return endBool;
-            // var endBool = true;
-            if (!endBool) {
-                //end = 0;
-                return endBool;
-            }
-            
-            // if (endBool) {
-            //     end = 10;
-            // } else {
-            //     end = 0;
-            // }
-            // end = 10;
-            end++;
-            //return end;
-        }
-        // return bigOrbMap;
 
-        return testList;
+            if (endBool) {
+                whileBool = false;
+                break;
+            }
+        }
         return totalOrbits;
 
-            //count remaining connections via map's keys
-          
-        
-       // return bigOrbMap; 
     }, mainFunP2: function(){
         
     }
