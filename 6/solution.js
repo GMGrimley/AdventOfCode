@@ -6,10 +6,15 @@ module.exports = {
         var text = fs.readFileSync('input2.txt').toString();
         var newLineSep = text.split(/\r?\n/);
         return newLineSep;
-    }, findParent: function(planet,map, planetSet) {
-        // for (var m = 0; m < planetSet.length; m++) {
-        //     var list = map.get(planetSet[m]);
-        // }
+    }, findParent: function(planet,map) {
+        var returnParent = '';
+        for (const entry of map) {
+            if (entry[1].includes(planet)) {
+                returnParent = entry[0];
+                break;
+            }
+        }
+        return returnParent;
     }, isMapEmpty: function(map) {
         var returnBool = true;
         for (const entry of map) {
@@ -19,15 +24,17 @@ module.exports = {
             }
         }
         return returnBool;
-
-
     }, traverse: function(list, map, parentP) {
         if (typeof list !== "undefined") { 
             var planetOs = list; // set of orbiting planets
             // return list.length;
             for (var y = 0; y < list.length; y++) {
                 if (map.has(planetOs[y])) {
-                    return this.traverse(map.get(planetOs[y]), map, planetOs[y]);
+                    if (map.get(planetOs[y].length === 0)) {
+                        return [this.findParent(parentP, map), parentP]; // return parentP's parent, parentP;
+                    } else {
+                        return this.traverse(map.get(planetOs[y]), map, planetOs[y]);
+                    }
                 } else {
                     if(parentP != null) {
                         if (planetOs[y] != null) {  
@@ -98,6 +105,8 @@ module.exports = {
             bigOrbMap.set(orbited, innerList);
             
         }
+
+        var testBreak = 0;
         
         var whileBool = true;
         var testList = [];
@@ -105,8 +114,8 @@ module.exports = {
             for (var x = 0; x < planetSetA.length; x++) {
 
                 // find bottom values, count them, remove them.
-                var planetL = this.traverse(bigOrbMap.get(planetSetA[x]), bigOrbMap); //a last-stop orbiter
-                
+                var planetL = this.traverse(planetSet, bigOrbMap,planetSetA[x]); //a last-stop orbiter
+                return planetL;
                 // count up the tree
                 if (typeof planetL !== "undefined" && planetL !== null) {
                     if (planetL[0] !== null) { 
@@ -132,13 +141,23 @@ module.exports = {
                 }
             }
             // is map depleted?
-            var endBool = this.isMapEmpty(bigOrbMap, planetSet);
+            var endBool = this.isMapEmpty(bigOrbMap);
 
             if (endBool) {
                 whileBool = false;
                 break;
             }
+            //break for testing
+            if (testBreak > 1000) {
+                break;
+            } else {
+                testBreak++;
+            }
+
+
+            //to-do: count parent planets that are remaining
         }
+        return bigOrbMap;
         return totalOrbits;
 
     }, mainFunP2: function(){
